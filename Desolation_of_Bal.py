@@ -71,15 +71,23 @@ class Character:
     def alive(self):
         return self.health > 0
     
-# Whenever a character (which is assigned to dante and Goblin) attacks an enemy, it will print who attacked who and then give back a value of the enemies health
+# Whenever a character (which is assigned to Dante and Goblin) attacks an enemy, it will print who attacked who and then give back a value of the enemy's health
     def attack(self, enemy):
         if enemy.alive():
-         damage = self.power
-         enemy.health = max(0, enemy.health - damage)  # Prevent health from going negative
-         print(f"The {self.__class__.__name__} attacks the {enemy.__class__.__name__}!")
-         print(f"The {enemy.__class__.__name__}'s health is now {enemy.health}")
-         if not enemy.alive():
-            print(f"The {enemy.__class__.__name__} has been defeated!\n")
+            damage = self.power
+            print(f"The {self.__class__.__name__} attacks the {enemy.__class__.__name__}!")
+        
+            # Use enemy's take_damage method instead of directly modifying health
+            if hasattr(enemy, 'take_damage'):
+                damage_taken = enemy.take_damage(damage)
+                if not damage_taken:
+                    return  # If the enemy dodged, skip the rest of the logic
+            else:
+                enemy.health = max(0, enemy.health - damage)  # Prevent health from going negative
+                print(f"The {enemy.__class__.__name__}'s health is now {enemy.health}")
+        
+            if not enemy.alive():
+                print(f"The {enemy.__class__.__name__} has been defeated!\n")
         else:
             print(f"The {enemy.__class__.__name__} has already been defeated\n")
 
@@ -92,18 +100,20 @@ class Character:
         self.coins = 20
 
 
-# Classes of dante
+# Classes of Dante
 class Dante(Character):
     def __init__(self, health, power, coins =20):
         super().__init__(health, power, bounty =0)
         self.coins = coins ## Initialize dante with some starting coins
+        
+
     def print_status(self):
         if self.alive():
          print (f"Dante has {self.health} health and {self.power} power.\n")
         else:
          print ("GAME OVER\n")
 
-# Make the dante generate double damage points during an attack with a probability of 20%. If random number is less than .2, it will do a default attack.   
+# Make the dante generate double damage points during an attack with a probability of 20%.
     def attack(self, enemy):
         if random.random() < 0.2:
             double_damage = self.power * 2
@@ -113,11 +123,19 @@ class Dante(Character):
         else:
             super().attack(enemy)
 
-        # Check if enemy is defeated, if so it will reward the bounty
+        # Check if the enemy is defeated, if so it will reward the bounty
         if not enemy.alive():
             print(f"You defeated the {enemy.__class__.__name__} and earned {enemy.bounty} coins! Visit the Store to spend.\n")
-            self.coins += enemy.bounty  # Add bounty to dante's coins
+            self.coins += enemy.bounty  # Add bounty to Dante's coins
             print(f"You now have {self.coins} coins.\n")
+        
+        # After attacking, print Dante's status
+        self.print_status()
+
+    # Buy method to allow dante objects to purchase items from the virtual store
+    def buy(self, item):
+        self.coins -= item.cost
+        item.apply(self)
 
 
 # Add a buy method to the dante class so that dante objects can purchase items from a  virtual store
@@ -146,13 +164,15 @@ class Shadow(Character):
     def print_status(self):
         print (f"The Shadow has {self.health} health and {self.power} power\n")
 
-# Only 1 starting health but will only take damage about once out of every ten etimes he is attacked.
+# Only take damage 20% of the time
     def take_damage(self, amount):
-        if random.random() < 0.5:
+        if random.random() < 0.2:
             self.health -= amount
             print(f"The Shadow takes {amount} of damage!\n")
+            return True  # Return True if damage was taken
         else:
-         print("The Shadow dodged your attack!\n")
+            print("The Shadow dodged your attack!\n")
+            return False  # Return False if the attack was dodged
 
 
 # Class of Zombie
@@ -188,7 +208,7 @@ class Wizard(Character):
          print (f"The Wizard has {self.health} health and {self.power} power\n")
 
 # values Characters Health and Power
-dante = Dante(100, 10)
+dante = Dante(125, 10)
 goblin = Goblin(55, 8, 5)
 shadow = Shadow(15, 5, 6)
 zombie= Zombie(10, 7, 20)
@@ -209,6 +229,8 @@ def display_opening_screen():
     print(" ░ ░  ░    ░   ░  ░  ░  ░ ░ ░ ▒    ░ ░    ░   ▒    ░       ▒ ░░ ░ ░ ▒     ░   ░ ░    ░ ░ ░ ▒   ░ ░        ░    ░   ░   ▒     ░ ░   ")
     print("   ░       ░  ░      ░      ░ ░      ░  ░     ░  ░         ░      ░ ░           ░        ░ ░              ░            ░  ░    ░  ░")
     print(" ░                                                                                                             ░                    \n\n\n")
+
+
 
 # Call the function to display the opening screen before game starts
 display_opening_screen()
