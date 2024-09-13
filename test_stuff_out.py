@@ -234,42 +234,47 @@ def title_screen():
 # Call the function to display the opening screen before game starts
 title_screen()
 
-def display_ascii_art_in_terminal():
-    ascii_art = """
-                                                   Q                           Q   
-                                                   QQ                         QQ   
-                                                   QQ                         QQ   
-                                                   QQQ                       QQQ   
-                                                   QQQ                       QQQ   
-                                                   QQQQ                     QQQQ   
-                                                 Q  QQQQ                   QQQQ  Q 
-                                                 QQ QQQQQ                 QQQQQ QQ 
-                                                 QQQQQQQQQQ             QQQQQQQQQQ 
-                                                 QQQQQQQQQQQQ         QQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQQQ  Q  QQQQQQQQQQQQQ  
-                                                Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
-                                                QQQQQQQQQQQQQQ  QQ QQQQQQQQQQQQQQQ
-                                                 QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
-                                                   QQQQQQQQQ    QQQ    QQQQQQQQQ   
-                                                 QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
-                                                 QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
-                                                    QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
-                                                    QQQQQQQQQQQQQQQQQQQQQQQQQQQ    
-                                                   QQQQQQQ    QQQQQQQ    QQQQQQQ   
-                                                    QQQQQ     QQQQQQQ     QQQQQ    
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQ              
-                                                               QQQQQ               
-    """
-    print(ascii_art)
+def pad_ascii_art(art, padding=10):
+    lines = art.split('\n')
+    padded_lines = [' ' * padding + line + ' ' * padding for line in lines]
+    return '\n'.join(padded_lines)
 
-# Call the function to display the ASCII art in the terminal
-display_ascii_art_in_terminal()
+ascii_art = """
+Q                           Q   
+                             QQ                         QQ   
+                             QQ                         QQ   
+                             QQQ                       QQQ   
+                             QQQ                       QQQ   
+                             QQQQ                     QQQQ   
+                           Q  QQQQ                   QQQQ  Q 
+                           QQ QQQQQ                 QQQQQ QQ 
+                           QQQQQQQQQQ             QQQQQQQQQQ 
+                           QQQQQQQQQQQQ         QQQQQQQQQQQQ 
+                            QQQQQQQQQQQQQ  Q  QQQQQQQQQQQQQ  
+                          Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
+                          QQQQQQQQQQQQQQ  QQ QQQQQQQQQQQQQQQ
+                           QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
+                            QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
+                             QQQQQQQQQ    QQQ    QQQQQQQQQ   
+                           QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
+                           QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
+                            QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
+                              QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
+                              QQQQQQQQQQQQQQQQQQQQQQQQQQQ    
+                             QQQQQQQ    QQQQQQQ    QQQQQQQ   
+                              QQQQQ     QQQQQQQ     QQQQQ    
+                                        QQQQQQQQ             
+                                        QQQQQQQQ             
+                                        QQQQQQQQ             
+                                        QQQQQQQQ             
+                                        QQQQQQQ              
+                                         QQQQQ               
+"""
+
+# Pad the ASCII art with 20 spaces on each side
+padded_art = pad_ascii_art(ascii_art, padding=20)
+
+print(padded_art)
 
 
 import textwrap
