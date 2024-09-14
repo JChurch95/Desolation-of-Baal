@@ -1,222 +1,323 @@
 import random
 
-# Base class for Items
-class Item:
-    def __init__(self, name, cost):
-        self.name = name
-        self.cost = cost
 
-    def apply(self, dante):
-        pass
+class Tyranids:
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=0):
+        self.hive_fleet = hive_fleet
+        self.combined_strength = combined_strength
+        self.xeno_skulls = xeno_skulls
 
-# Tonic class that adds 2 to the dante's health when applied
-class Tonic(Item):
-    def __init__(self):
-        super().__init__("Tonic", 10)
-
-    def apply(self, dante):
-        dante.health += 2
-        print(f"The {dante.__class__.__name__} uses the Tonic and gains 2 health! Health is now {dante.health}\n")
-
-# Sword class that adds 2 to the dante's power when applied
-class Sword(Item):
-    def __init__(self):
-        super().__init__("Sword", 20)
-
-    def apply(self, dante):
-        dante.power += 2
-        print(f"The {dante.__class__.__name__} wields the Sword and gains 2 power! Power is now {dante.power}\n")
-
-
-# Store class
-class Store:
-    items = [Tonic(), Sword()]  # Store items: Tonic and Sword
-
-    def do_shopping(self, dante):
-        while True:
-            print("=====================")
-            print("Welcome to the store!")
-            print("=====================")
-            print(f"You have {dante.coins} coins.")
-            print("What do you want to buy?")
-
-            for i, item in enumerate(Store.items):
-                print(f"{i + 1}. {item.name} ({item.cost} coins)")
-            print("9. Leave the store")
-
-            user_input = int(input("> "))
-
-            if user_input == 9:
-                print("Thanks for visiting the store!")
-                break
-            elif 1 <= user_input <= len(Store.items):
-                item_to_buy = Store.items[user_input - 1]
-
-                if dante.coins >= item_to_buy.cost:
-                    dante.buy(item_to_buy)
-                else:
-                    print("Sorry, you don't have enough coins to buy that item.")
-            else:
-                print("Invalid input, please try again.")
-
-
-# Create class Character that the classes of dante and Goblin will pull from
-class Character:
-    def __init__(self, health, power, bounty=0):
-        self.health = health
-        self.power = power
-        self.bounty = bounty
-
-# If the character's health is greater than 0, it will return True to being alive.
     def alive(self):
-        return self.health > 0
-    
-# Whenever a character (which is assigned to Dante and Goblin) attacks an enemy, it will print who attacked who and then give back a value of the enemy's health
+        return self.hive_fleet > 0
+
     def attack(self, enemy):
         if enemy.alive():
-            damage = self.power
-            print(f"The {self.__class__.__name__} attacks the {enemy.__class__.__name__}!")
-        
-            # Use enemy's take_damage method instead of directly modifying health
+            damage = self.combined_strength
+            print(f"- The {self.__class__.__name__} charges the Blood Angels and kills {damage} of their Space Marines!")
+            print()
+            
             if hasattr(enemy, 'take_damage'):
                 damage_taken = enemy.take_damage(damage)
                 if not damage_taken:
                     return  # If the enemy dodged, skip the rest of the logic
             else:
-                enemy.health = max(0, enemy.health - damage)  # Prevent health from going negative
-                print(f"The {enemy.__class__.__name__}'s health is now {enemy.health}")
+                enemy.ranks = max(0, enemy.ranks - damage)  # Prevent ranks from going negative
+            
+            print(f"The {enemy.__class__.__name__} combined strength is down to {enemy.combined_strength}")
+
+    def take_damage(self, damage):
+        self.hive_fleet -= damage
+
+
+# Class of Gaunts
+class Gaunts(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=5):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet has {self.hive_fleet} Gaunts left in their swarm... Their combined strength is {self.combined_strength}. Plan your next attack before they regroup!\n")
+
+# Class of Warriors
+class Warriors(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=6):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet have {self.hive_fleet} Warrior class Xenos left in their swarm... Their combined strength is {self.combined_strength}. Show them what true warriros look like!\n")
         
+ 
+# Class of Ravener
+class Ravener(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=10):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet have {self.hive_fleet} Raveners left in their swarm... Their combined strength is {self.combined_strength}. Feel for tremors before they attack.\n")
+
+# Only take damage 20% of the time
+    def take_damage(self, amount):
+        if random.random() < 0.2:
+            self.ranks -= amount
+            print(f"- You slaughtered {amount} Raveners!\n")
+            return True  # Return True if damage was taken
+        else:
+            print("- The Raveners escaped underground! Beware what lurks below...\n")
+            return False  # Return False if the attack was dodged
+        
+# Class of Lictor
+class Lictor(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=20):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet have {self.hive_fleet} Lictors left in their swarm... Their combined strength is {self.combined_strength}. Beware of their adaptive camoflouge.\n")
+
+# Only take damage 30% of the time
+    def take_damage(self, amount):
+        if random.random() < 0.3:
+            self.ranks -= amount
+            print(f"- You slaughtered {amount} Lictors!\n")
+            return True  # Return True if damage was taken
+        else:
+            print("- The Lictors activated their active camoflouge! They have evade your wrath for now...\n")
+            return False  # Return False if the attack was dodged
+        
+# Class of Carnifex
+class Carnifex(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=20):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet have {self.hive_fleet} Carnifices left in their swarm... Their combined strength is {self.combined_strength}. You will need sound planning to make it out alive.\n")
+
+# Class of Hive Tyrant
+class Hive_Tyrant(Tyranids):
+    def __init__(self, hive_fleet, combined_strength, xeno_skulls=15):
+        super().__init__(hive_fleet, combined_strength, xeno_skulls)
+
+    def print_status(self):
+        if self.alive():
+            print (f") The Hive Fleet have {self.hive_fleet} Hive Tyrant left in their swarm... it's strength is {self.combined_strength}. You will need a miracle to take this beast down.\n")
+
+
+
+class Space_Marines:
+    def __init__(self, ranks, combined_strength, xeno_skulls=0):
+        self.ranks = min(ranks, 1000) # Initialize with a maximum of 1000 ranks
+        self.combined_strength = combined_strength
+        self.xeno_skulls = xeno_skulls
+        self.xeno_skulls = 20  # Default xeno_skulls value
+
+    def alive(self):
+        return self.ranks > 0
+
+    def ranks(self, value):
+        self._ranks = min(value, 1000)  # Ensure ranks never exceed 1000
+
+    def alive(self):
+        return self.ranks > 0
+    
+    def attack(self, enemy):
+        if enemy.alive():
+            damage = self.combined_strength
+            print(f"- The Blood Angels attack the {enemy.__class__.__name__} with righteous fury ande deal {damage} damage!\n")
+            
+            if hasattr(enemy, 'take_damage'):
+                damage_taken = enemy.take_damage(damage)
+                if not damage_taken:
+                    return  # If the enemy dodged, skip the rest of the logic
+            else:
+                enemy.hive_fleet = max(0, enemy.hive_fleet - damage)  # Prevent ranks from going negative
+            
+            print(f"The {enemy.__class__.__name__} are now down to {enemy.hive_fleet} filthy xenos!\n")
+            
             if not enemy.alive():
                 print(f"The {enemy.__class__.__name__} has been defeated!\n")
         else:
             print(f"The {enemy.__class__.__name__} has already been defeated\n")
 
     def take_damage(self, damage):
-        self.health -= damage
+        self.ranks -= damage
 
+# Modify the main game loop
+# First, create a list of all enemy instances
+enemies = [Gaunts, Warriors, Ravener, Lictor, Carnifex, Hive_Tyrant]
 
-# Add a coins attribute to the Character class. Have it default to a value of 20
-    def coins(self, coins = 20):
-        self.coins = 20
-
-
-# Classes of Dante
-class Dante(Character):
-    def __init__(self, health, power, coins =20):
-        super().__init__(health, power, bounty =0)
-        self.coins = coins ## Initialize dante with some starting coins
-        
+# Classes of Blood_Angels
+class Blood_Angels(Space_Marines):
+    def __init__(self, ranks, combined_strength, xeno_skulls=20):
+        super().__init__(ranks, combined_strength, xeno_skulls=0)
+        self.xeno_skulls = xeno_skulls
+        self.max_ranks = 1000 # Set maximum number of Blood Angels to 1000
 
     def print_status(self):
         if self.alive():
-         print (f"Dante has {self.health} health and {self.power} power.\n")
+            print(f"* The Blood Angels have {self.ranks} Space Marines left in their Chapter. Their combined strength is {self.combined_strength}. Hold fast!\n")
         else:
-         print ("GAME OVER\n")
+            print("Even though they stood valiantly against the Xeno horde, The Blood Angels could not hold back the Tyranid Fleet. Baal is lost!\n")
 
-# Make the dante generate double damage points during an attack with a probability of 20%.
+    def check_victory(self, enemies):
+        if all(not enemy.alive() for enemy in enemies):
+            ascii_art = """
+ ▄▄▄▄    ██▓     ▒█████   ▒█████  ▓█████▄     ▄▄▄       ███▄    █   ▄████ ▓█████  ██▓      ██████     █     █░ ██▓ ███▄    █  ▐██▌ 
+▓█████▄ ▓██▒    ▒██▒  ██▒▒██▒  ██▒▒██▀ ██▌   ▒████▄     ██ ▀█   █  ██▒ ▀█▒▓█   ▀ ▓██▒    ▒██    ▒    ▓█░ █ ░█░▓██▒ ██ ▀█   █  ▐██▌ 
+▒██▒ ▄██▒██░    ▒██░  ██▒▒██░  ██▒░██   █▌   ▒██  ▀█▄  ▓██  ▀█ ██▒▒██░▄▄▄░▒███   ▒██░    ░ ▓██▄      ▒█░ █ ░█ ▒██▒▓██  ▀█ ██▒ ▐██▌ 
+▒██░█▀  ▒██░    ▒██   ██░▒██   ██░░▓█▄   ▌   ░██▄▄▄▄██ ▓██▒  ▐▌██▒░▓█  ██▓▒▓█  ▄ ▒██░      ▒   ██▒   ░█░ █ ░█ ░██░▓██▒  ▐▌██▒ ▓██▒ 
+░▓█  ▀█▓░██████▒░ ████▓▒░░ ████▓▒░░▒████▓     ▓█   ▓██▒▒██░   ▓██░░▒▓███▀▒░▒████▒░██████▒▒██████▒▒   ░░██▒██▓ ░██░▒██░   ▓██░ ▒▄▄  
+░▒▓███▀▒░ ▒░▓  ░░ ▒░▒░▒░ ░ ▒░▒░▒░  ▒▒▓  ▒     ▒▒   ▓▒█░░ ▒░   ▒ ▒  ░▒   ▒ ░░ ▒░ ░░ ▒░▓  ░▒ ▒▓▒ ▒ ░   ░ ▓░▒ ▒  ░▓  ░ ▒░   ▒ ▒  ░▀▀▒ 
+▒░▒   ░ ░ ░ ▒  ░  ░ ▒ ▒░   ░ ▒ ▒░  ░ ▒  ▒      ▒   ▒▒ ░░ ░░   ░ ▒░  ░   ░  ░ ░  ░░ ░ ▒  ░░ ░▒  ░ ░     ▒ ░ ░   ▒ ░░ ░░   ░ ▒░ ░  ░ 
+ ░    ░   ░ ░   ░ ░ ░ ▒  ░ ░ ░ ▒   ░ ░  ░      ░   ▒      ░   ░ ░ ░ ░   ░    ░     ░ ░   ░  ░  ░       ░   ░   ▒ ░   ░   ░ ░     ░ 
+ ░          ░  ░    ░ ░      ░ ░     ░             ░  ░         ░       ░    ░  ░    ░  ░      ░         ░     ░           ░  ░    
+      ░                            ░                                                                                              
+"""
+            print(ascii_art)
+            print("\n" + "=" * 60)
+            print("VICTORY FOR THE IMPERIUM!")
+            print("=" * 60)
+            print("The Blood Angels have triumphed over the Tyranid Swarm!")
+            print("Baal is saved, and the legacy of Sanguinius lives on!")
+            print("The Emperor protects!")
+            print("=" * 60)
+            return True
+        return False
+
     def attack(self, enemy):
         if random.random() < 0.2:
-            double_damage = self.power * 2
-            enemy.health -= double_damage
-            print(f"The {self.__class__.__name__} musters all of his strength and strikes with double damage!")
-            print(f"The {enemy.__class__.__name__} takes {double_damage} damage!")
+            double_damage = self.combined_strength * 2
+            enemy.hive_fleet -= double_damage
+            print(f"- The {self.__class__.__name__} give into the Black Rage...\n")
+            print(f"- They slaughter {double_damage} of the {enemy.__class__.__name__}!\n\n")
         else:
             super().attack(enemy)
 
-        # Check if the enemy is defeated, if so it will reward the bounty
+        # Check if the enemy is defeated, if so it will reward the xeno_skulls
         if not enemy.alive():
-            print(f"You defeated the {enemy.__class__.__name__} and earned {enemy.bounty} coins! Visit the Store to spend.\n")
-            self.coins += enemy.bounty  # Add bounty to Dante's coins
-            print(f"You now have {self.coins} coins.\n")
-        
-        # After attacking, print Dante's status
-        self.print_status()
+            print(f"You defeated the {enemy.__class__.__name__} and earned {enemy.xeno_skulls} Xeno Skulls! Visit the Armouring Hall to recruit more units.\n")
+            self.xeno_skulls += enemy.xeno_skulls  # Add xeno_skulls to Blood_Angels's xeno_skulls
+            print(f"You now have {self.xeno_skulls} Xeno Skulls.\n")
+            
+            # Print Blood_Angels's status only if the enemy is defeated
+            self.print_status()
+        # If the enemy is still alive, don't print the status
 
-    # Buy method to allow dante objects to purchase items from the virtual store
+    # Buy method to allow Blood_Angels objects to purchase items from the virtual armour_hall
+    def recruit(self, item):
+        self.buy(item)
+    
     def buy(self, item):
-        self.coins -= item.cost
-        item.apply(self)
-
-
-# Add a buy method to the dante class so that dante objects can purchase items from a  virtual store
-# Give the method an item parameter. The item being purchased will be passed as an arguement into the method.
-# It should subtract an items cost from the dante object's avaiable coins
-    def buy(self, item):
-        self.coins -= item.cost
-        item.apply(self)
-        
-
-# Class of Goblin
-class Goblin(Character):
-    def __init__(self, health, power, bounty =5):
-        super().__init__(health, power, bounty)
-
-    def print_status(self):
-        if self.alive():
-            print (f"The Goblin has {self.health} health and {self.power} power\n")
-        
-
-# Class of Shadow 
-class Shadow(Character):
-    def __init__(self, health, power, bounty =6):
-        super().__init__(health, power, bounty)
-
-    def print_status(self):
-        print (f"The Shadow has {self.health} health and {self.power} power\n")
-
-# Only take damage 20% of the time
-    def take_damage(self, amount):
-        if random.random() < 0.2:
-            self.health -= amount
-            print(f"The Shadow takes {amount} of damage!\n")
-            return True  # Return True if damage was taken
+        if self.xeno_skulls >= item.cost:
+            if hasattr(item, 'recruit_amount'):
+                if self.ranks + item.recruit_amount <= self.max_ranks:
+                    self.xeno_skulls -= item.cost
+                    item.apply(self)
+                else:
+                    remaining_slots = self.max_ranks - self.ranks
+                    print()
+                    print(f"Sir, we cannot recruit {item.recruit_amount} {item.name}s. We have {remaining_slots} positions available to fill.")
+                    print()
+                    print(f"Your chapter is at {self.ranks}/{self.max_ranks} capacity.\n\n")
+            else:
+                self.xeno_skulls -= item.cost
+                item.apply(self)
         else:
-            print("The Shadow dodged your attack!\n")
-            return False  # Return False if the attack was dodged
+            print(f"Not enough Xeno Skulls to recruit {item.name}. You need {item.cost}, but you only have {self.xeno_skulls}.")
+        
+# Units class and its subclasses, including the recruit_amount attribute to ensure we can't recruit more than the max ranks
+class Units:
+    def __init__(self, name, cost, recruit_amount):
+        self.name = name
+        self.cost = cost
+        self.recruit_amount = recruit_amount
+
+    def apply(self, Blood_Angels):
+        pass
+
+class Assault(Units):
+    def __init__(self):
+        super().__init__("Assault", 10, 100)
+
+    def apply(self, Blood_Angels):
+        Blood_Angels.ranks += self.recruit_amount
+        Blood_Angels.combined_strength += 10
+        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Assault Space Marines into their ranks and add 10 to their combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+
+class Incursor(Units):
+    def __init__(self):
+        super().__init__("Incursor", 20, 75)
+
+    def apply(self, Blood_Angels):
+        Blood_Angels.ranks += self.recruit_amount
+        Blood_Angels.combined_strength += 20
+        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Incursor Space Marines into their ranks and gains 20 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+
+class Chaplain(Units):
+    def __init__(self):
+        super().__init__("Chaplain", 30, 50)
+
+    def apply(self, Blood_Angels):
+        Blood_Angels.ranks += self.recruit_amount
+        Blood_Angels.combined_strength += 30
+        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Chaplains Space Marines into their ranks and gains 30 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+
+class Dreadnaught(Units):
+    def __init__(self):
+        super().__init__("Dreadnaught", 40, 25)
+
+    def apply(self, Blood_Angels):
+        Blood_Angels.ranks += self.recruit_amount
+        Blood_Angels.combined_strength += 40
+        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Dreadnaughts into their ranks and gains 40 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+
+class Commander(Units):
+    def __init__(self):
+        super().__init__("Commander", 100, 1)
+
+    def apply(self, Blood_Angels):
+        Blood_Angels.ranks += self.recruit_amount
+        Blood_Angels.combined_strength += 100
+        print(f"- The {Blood_Angels.__class__.__name__} recruit a Commander into their ranks and gains 100 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+# armour_hall class
+class Armour_Hall:
+    items = [Assault(), Incursor(), Chaplain(), Dreadnaught(), Commander()]  # armour_hall items: All unit subclasses
+
+    def do_shopping(self, Blood_Angels):
+        while True:
+            print("=====================")
+            print("The Magos awaits your command")
+            print("=====================")
+            print()
+            print(f"You have {Blood_Angels.xeno_skulls} Xeno Skulls.")
+            print()
+            print("Which unit do we need brother?")
+            print()
+
+            for i, item in enumerate(armour_hall.items):
+                print(f"{i + 1}. {item.name} ({item.cost} Xeno Skulls)")
+            print("6. Go back to crush more Xeno Skulls")
+            print()
+
+            user_input = int(input("> Let's do option: "))
+
+            if user_input == 6:
+                print("Hold the line brothers! Sanguinius is watching over us!")
+                break
+            elif 1 <= user_input <= len(armour_hall.items):
+                item_to_buy = armour_hall.items[user_input - 1]
+
+                if Blood_Angels.xeno_skulls >= item_to_buy.cost:
+                    Blood_Angels.buy(item_to_buy)
+                else:
+                    print("I'm sorry Brother, you don't have enough Xeno Skulls to buy that item.")
+            else:
+                print("Consulting the Codex Astartes to figure out what you require...")
 
 
-# Class of Zombie
-class Zombie(Character):
-    def __init__(self, health, power, bounty =20):
-        super().__init__(health, power, bounty)
-
-    def print_status(self):
-        print (f"The Zombie has {self.health} health and {self.power} power\n")
-
-# Make the Zombie class not die if it's health reaches zero
-    def alive(self):
-        return True
-
-
-# Class of Archer
-class Archer(Character):
-    def __init__(self, health, power, bounty =10):
-        super().__init__(health, power, bounty)
-
-    def print_status(self):
-        if self.alive():
-         print (f"The Archer has {self.health} health and {self.power} power\n")
-
-
-# Class of Wizard
-class Wizard(Character):
-    def __init__(self, health, power, bounty =15):
-        super().__init__(health, power, bounty)
-
-    def print_status(self):
-        if self.alive():
-         print (f"The Wizard has {self.health} health and {self.power} power\n")
-
-# values Characters Health and Power
-dante = Dante(125, 10)
-goblin = Goblin(55, 8, 5)
-shadow = Shadow(15, 5, 6)
-zombie= Zombie(10, 7, 20)
-archer = Archer(25, 6, 10)
-wizard = Wizard(35, 15, 15)
-
-store = Store()  # Create a Store object
-
+armour_hall = Armour_Hall()  # Create a armour_hall object
 
 def title_screen():
     print("\n\n\n▓█████▄ ▓█████   ██████  ▒█████   ██▓    ▄▄▄     ▄▄▄█████▓ ██▓ ▒█████   ███▄    █     ▒█████    █████▒    ▄▄▄▄    ▄▄▄      ▄▄▄       ██▓    ")
@@ -228,59 +329,64 @@ def title_screen():
     print(" ░ ▒  ▒  ░ ░  ░░ ░▒  ░ ░  ░ ▒ ▒░ ░ ░ ▒  ░ ▒   ▒▒ ░   ░     ▒ ░  ░ ▒ ▒░ ░ ░░   ░ ▒░     ░ ▒ ▒░  ░         ▒░▒   ░   ▒   ▒▒ ░░ ░ ▒  ░")
     print(" ░ ░  ░    ░   ░  ░  ░  ░ ░ ░ ▒    ░ ░    ░   ▒    ░       ▒ ░░ ░ ░ ▒     ░   ░ ░    ░ ░ ░ ▒   ░ ░        ░    ░   ░   ▒    ░   ▒     ░ ░   ")
     print("   ░       ░  ░      ░      ░ ░      ░  ░     ░  ░         ░      ░ ░           ░        ░ ░              ░            ░  ░     ░  ░    ░  ░")
-    print(" ░                                                                                                             ░                             \n")
+    print(" ░                                                                                                             ░                             ")
 
 
 # Call the function to display the opening screen before game starts
 title_screen()
 
-def display_ascii_art_in_terminal():
-    ascii_art = """
-                                                      Q                           Q   
-                                                      QQ                         QQ   
-                                                      QQ                         QQ   
-                                                      QQQ                       QQQ   
-                                                      QQQ                       QQQ   
-                                                      QQQQ                     QQQQ   
-                                                    Q  QQQQ                   QQQQ  Q 
-                                                    QQ QQQQQ                 QQQQQ QQ 
-                                                    QQQQQQQQQQ             QQQQQQQQQQ 
-                                                    QQQQQQQQQQQQ         QQQQQQQQQQQQ 
-                                                     QQQQQQQQQQQQQ  Q  QQQQQQQQQQQQQ  
-                                                   Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
-                                                   QQQQQQQQQQQQQQ  QQ QQQQQQQQQQQQQQQ
-                                                    QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
-                                                     QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
-                                                      QQQQQQQQQ    QQQ    QQQQQQQQQ   
-                                                    QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
-                                                    QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
-                                                     QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
-                                                       QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
-                                                       QQQQQQQQQQQQQQQQQQQQQQQQQQQ    
-                                                      QQQQQQQ    QQQQQQQ    QQQQQQQ   
-                                                       QQQQQ     QQQQQQQ     QQQQQ    
-                                                                 QQQQQQQQ             
-                                                                 QQQQQQQQ             
-                                                                 QQQQQQQQ             
-                                                                 QQQQQQQQ             
-                                                                 QQQQQQQ              
-                                                                  QQQQQ               
-    \n\n"""
-    print(ascii_art)
+def pad_ascii_art(art, padding=10):
+    lines = art.split('\n')
+    padded_lines = [' ' * padding + line + ' ' * padding for line in lines]
+    return '\n'.join(padded_lines)
 
-# Call the function to display the ASCII art in the terminal
-display_ascii_art_in_terminal()
+ascii_art = """
+                             Q                           Q   
+                             QQ                         QQ   
+                             QQ                         QQ   
+                             QQQ                       QQQ   
+                             QQQ                       QQQ   
+                             QQQQ                     QQQQ   
+                           Q  QQQQ                   QQQQ  Q 
+                           QQ QQQQQ                 QQQQQ QQ 
+                           QQQQQQQQQQ             QQQQQQQQQQ 
+                           QQQQQQQQQQQQ         QQQQQQQQQQQQ 
+                            QQQQQQQQQQQQQ     QQQQQQQQQQQQQ  
+                          Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
+                          QQQQQQQQQQQQQQ   Q  QQQQQQQQQQQQQQQ
+                           QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
+                            QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
+                             QQQQQQQQQ    QQQ    QQQQQQQQQ   
+                           QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
+                           QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
+                            QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
+                              QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
+                            Q QQQQQQQQQQQQQQQQQQQQQQQQQQQ Q   
+                             QQQQQQQ    QQQQQQQ    QQQQQQQ   
+                              QQQQQ     QQQQQQQ     QQQQQ    
+                                       QQQQQQQQQ             
+                                       QQQQQQQQQ             
+                                       QQQQQQQQQ             
+                                       QQQQQQQQQ             
+                                        QQQQQQQ              
+                                         QQQQQ               
+\n"""
+
+# Pad the ASCII art with 20 spaces on each side
+padded_art = pad_ascii_art(ascii_art, padding=20)
+
+print(padded_art)
 
 
 import textwrap
 
 def story_intro():
     story = """
-The galaxy is torn asunder by the devastating events of the Cicatrix Maledictum, the great warp storm that has plunged the Imperium into a new era of darkness. Amidst the chaos, the Blood Angels, led by their indomitable Chapter Master, Commander Dante, stand as the last line of defense for their homeworld, Baal. For centuries, the Blood Angels have guarded the sands of their irradiated world, their noble gene-seed cursed by the thirst for blood and the madness of the Black Rage.
+The galaxy is torn asunder by the devastating events of the Cicatrix Maledictum, the great warp storm that has plunged the Imperium into a new era of darkness. Amidst the chaos, the Blood Angels, led by their indomitable Commander Dante, stand as the last line of defense for their homeworld, Baal. For centuries, the Blood Angels have guarded the sands of their irradiated world, their noble gene-seed cursed by the thirst for blood and the madness of the Black Rage.
 
-Now, an enemy unlike any they have ever faced descends upon them. The Great Devourer, the relentless Hive Fleet Leviathan, has come to consume Baal and all that remains of its defenders. Trillions of bioforms churn through the void, a tide of hunger that seeks to strip the planet of all life. The Blood Angels, supported by their successor chapters, brace for an apocalyptic last stand, knowing that should they fall, not only will Baal be lost, but the legacy of their Primarch, Sanguinius, may be extinguished forever.
+Now, an enemy unlike any they have ever faced descends upon them. The Great Devourer, the relentless Hive Fleet Leviathan, has come to consume Baal and all that remains of its defenders. Trillions of Tyranids churn through the void, a tide of hunger that seeks to strip the planet of all life. The Blood Angels, supported by their successor chapters, brace for an apocalyptic last stand, knowing that should they fall, not only will Baal be lost, but the legacy of their Primarch, Sanguinius, may be extinguished forever.
 
-As war breaks out, Dante prepares for the fight of his long and storied life, while far above, the enigmatic forces of the Imperium's most secretive orders stir, bearing strange tidings that may either doom Baal or grant the Blood Angels a fleeting chance at salvation. The stage is set for a battle of unimaginable scale, as ancient warriors clash against the primal hunger of the Tyranids, and Dante's eternal duty to his chapter and to the Emperor hangs in the balance...
+As war breaks out, the Blood Angels prepares for the fight of their life and for their home, while far above, the enigmatic forces of the Imperium's most secretive orders stir, bearing strange tidings that may either doom Baal or grant the Blood Angels a fleeting chance at salvation. The stage is set for a battle of unimaginable scale, as ancient warriors clash against the primal hunger of the Tyranids, and Commander Dante's eternal duty to his Chapter and to the Emperor hangs in the balance...
     """
 
     # Split the story into paragraphs based on the double newlines
@@ -299,101 +405,165 @@ As war breaks out, Dante prepares for the fight of his long and storied life, wh
 # Call the function to display the story
 story_intro()
 print()
+print()
+
+# Values of Tyranid hive with Xeno Skulls rewards
+blood_angels = Blood_Angels(1000, 300, 25)
+gaunts = Gaunts(1000, 300, 10)
+warriors = Warriors(500, 350, 20)
+ravener = Ravener(300, 400, 30)
+lictor= Lictor(250, 450, 50)
+carnifex = Carnifex(100, 500, 75)
+hive_tyrant = Hive_Tyrant(1, 800, 100)
 
 # This will check if the characters are alive, and if they are, it  will print their status
-while dante.alive():
+while blood_angels.alive():
     print()
-    dante.print_status()
-    if goblin.alive():
-        goblin.print_status()
+    blood_angels.print_status()
+    if gaunts.alive():
+        gaunts.print_status()
     else:
-        print("The puny Goblin was no match for you\n")
-    if shadow.alive():
-        shadow.print_status()
+        print("The seemingly endless swarm of gaunts have been crushed beneath the feet of the mighty Blood Angels. Rejoice in the eradication of the Zeno filth!\n")
+    if warriors.alive():
+        warriors.print_status()
     else:
-        print("The Shadow could not escape your fury\n")
-    if zombie.alive():
-        zombie.print_status()
+        print("The Tyranid Warriors lay butchered across the battfield. Xeno exoskeletons are no match for chainswords!\n")
+    if ravener.alive():
+        ravener.print_status()
     else:
-        print("You just broke the game! WOO HOO!\n")
-    if archer.alive():
-        archer.print_status()
+        print("Since the Raveners were attacking from underground, you lit the crude prometheum beneath the surface. It will burn for years before ever letting up!\n")
+    if lictor.alive():
+        lictor.print_status()
     else:
-        print("You hit the archer from HOW FAR?!\n")
-    if wizard.alive():
-        wizard.print_status()
+        print("You listened to your bioengineered heightened senses, and saw through the Lictors' active camoflouge. Threats neutralized.\n")
+    if carnifex.alive():
+        carnifex.print_status()
     else:
-        print("Cordless Hole Punchers don't care about no spells son!\n")
+        print("Through proper planning and sheer will, you have wiped out every Carnifex in the Tyranid swarm!\n")
+    if hive_tyrant.alive():
+        hive_tyrant.print_status()
+    else:
+        print("Only by the blood of Sanguinius that flows through you were you able to defeat the Hive Tyrant!\n")
+    print()
     print()
 
  # User Choices 
-    print("What do you want to do?\n")
-    print("1. Fight Goblin")
-    print("2. Fight the Shadow")
-    print("3. Fight the Zombie")
-    print("4. Fight the Archer")
-    print("5. Fight the Wizard")
-    print("6. Do Nothing")
-    print("7. Flee")
-    print("8. Visit the Store")  # Added option to visit the store
-    print("> ", end="")
+    print("=====================")
+    print("Commander, what are your orders?")
+    print("=====================")
+    print()
+    print("1. Charge into the swarm of Gaunts")
+    print("2. Take on the Tyranid Warriors")
+    print("3. Feel for vibrations from the Raveners")
+    print("4. Listen to your senses to find the Lictors")
+    print("5. Test your skills against mighty Carnifices")
+    print("6. Go toe to toe with the Hive Tyrant")
+    print("7. Take a moment to plan your next move")
+    print("8. Abandon Baal")
+    print("9. Visit the Armour Hall\n\n")  # Added option to visit the armour_hall
+    print("> Let's do option: ", end="")
+
      
      
     user_input = input()
     print()
+    print()
+    print()
     if user_input == "1":
-        if goblin.alive():
-            dante.attack(goblin)
-            if goblin.alive():
-                goblin.attack(dante)
+        print()
+        if gaunts.alive():
+            blood_angels.attack(gaunts)
+            if gaunts.alive():
+                gaunts.attack(blood_angels)
         else:
-            print(f"The {goblin.__class__.__name__} is already dead! Get your head in the game!\n")
-    elif user_input == "2":
-        if shadow.alive():
-            dante.attack(shadow)
-            if shadow.alive():
-                shadow.attack(dante)
+            print("X The Xeno filth has no more Gaunts! Worry not brother, there are plenty other skulls to crush!\n")
+    if user_input == "2":
+        print()
+        if warriors.alive():
+            blood_angels.attack(warriors)
+            if warriors.alive():
+                warriors.attack(blood_angels)
         else:
-            print(f"The {shadow.__class__.__name__} is already dead! Get your head in the game!\n")
-    elif user_input == "3":
-        if zombie.alive():
-            dante.attack(zombie)
-            if zombie.alive():
-                zombie.attack(dante)
+            print("X The Xeno filth has no more Warrirors! Worry not brother, there are plenty other skulls to crush!\n")
+    if user_input == "3":
+        print()
+        if ravener.alive():
+            blood_angels.attack(ravener)
+            if ravener.alive():
+                ravener.attack(blood_angels)
         else:
-            print(f"The {zombie.__class__.__name__} is already dead! Get your head in the game!\n")
-    elif user_input == "4":
-        if archer.alive():
-            dante.attack(archer)
-            if archer.alive():
-                archer.attack(dante)
+            print("X The Xeno filth has no more Raveners! Worry not brother, there are plenty other skulls to crush!\n")
+    if user_input == "4":
+        print()    
+        if lictor.alive():
+            blood_angels.attack(lictor)
+            if lictor.alive():
+                lictor.attack(blood_angels)
         else:
-            print(f"The {archer.__class__.__name__} is already dead! Get your head in the game!\n")
-    elif user_input == "5":
-        if wizard.alive():
-            dante.attack(wizard)
-            if wizard.alive():
-                wizard.attack(dante)
+            print("X The Xeno filth has no more Lictors! Worry not brother, there are plenty other skulls to crush!\n")
+    if user_input == "5":
+        print()
+        if carnifex.alive():
+            blood_angels.attack(carnifex)
+            if carnifex.alive():
+                carnifex.attack(blood_angels)
+            if not carnifex.alive():
+             print("X The Xeno filth has no more Carnifexes! Worry not brother, there are plenty other skulls to crush!\n")
+    if user_input == "6":
+        print()
+        if hive_tyrant.alive():
+            blood_angels.attack(hive_tyrant)
+            if hive_tyrant.alive():
+                hive_tyrant.attack(blood_angels)
+            if not hive_tyrant.alive():
+             print("X The Xeno filth Hive Tyrant has been defeated! Now that the hive mind link is weakened, take out the remaining swarm!\n")
+    if user_input == "7":
+        print()
+    # Check the condition for Blood_Angels.alive()
+        if blood_angels.alive():
+         print("There's no time for planning! The Xeno filth are relentless!\n")
+        # Enemy attacks
+        for enemy in [Gaunts, Warriors, Ravener, Lictor, Carnifex, Hive_Tyrant]:
+            if enemy.alive():
+                enemy.attack(blood_angels)
+        print()
+        
+        if blood_angels.alive():
+            print("Somehow, by the blood of Sanguinius, you survived. Get back to the frontline Commander!\n")
         else:
-            print(f"The {wizard.__class__.__name__} is already dead! Get your head in the game!\n")
-    elif user_input == "6":
-        print("He's just standing there... MENACINGLY!\n")
-        if goblin.alive(): goblin.attack(dante)
-        if shadow.alive(): shadow.attack(dante)
-        if zombie.alive(): zombie.attack(dante)
-        if archer.alive(): archer.attack(dante)
-        if wizard.alive(): wizard.attack(dante)
-        if not dante.alive(): print("Oh no, The dante has died! Better luck next time! GAME OVER\n")
+            print("You were overrun by the seemingly endless swarm of Xeno filth. All of Baal is lost!\n")
+            
+            xeno_win_ascii = """
+            ▒██   ██▒▓█████  ███▄    █  ▒█████    ██████     █     █░ ██▓ ███▄    █ 
+            ▒▒ █ █ ▒░▓█   ▀  ██ ▀█   █ ▒██▒  ██▒▒██    ▒    ▓█░ █ ░█░▓██▒ ██ ▀█   █ 
+            ░░  █   ░▒███   ▓██  ▀█ ██▒▒██░  ██▒░ ▓██▄      ▒█░ █ ░█ ▒██▒▓██  ▀█ ██▒
+             ░ █ █ ▒ ▒▓█  ▄ ▓██▒  ▐▌██▒▒██   ██░  ▒   ██▒   ░█░ █ ░█ ░██░▓██▒  ▐▌██▒
+            ▒██▒ ▒██▒░▒████▒▒██░   ▓██░░ ████▓▒░▒██████▒▒   ░░██▒██▓ ░██░▒██░   ▓██░
+            ▒▒ ░ ░▓ ░░░ ▒░ ░░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░   ░ ▓░▒ ▒  ░▓  ░ ▒░   ▒ ▒ 
+            ░░   ░▒ ░ ░ ░  ░░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░     ▒ ░ ░   ▒ ░░ ░░   ░ ▒░
+             ░    ░     ░      ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░       ░   ░   ▒ ░   ░   ░ ░ 
+             ░    ░     ░  ░         ░     ░ ░        ░         ░     ░           ░ 
+            """
+            print(xeno_win_ascii)
+            break  # Exit the loop when this condition is met
+    if user_input == "8":
+        print()
+        print("All of Baal looked to you for protection! You Filthy Heretic!\n")
+        xeno_win_ascii = """
+            ▒██   ██▒▓█████  ███▄    █  ▒█████    ██████     █     █░ ██▓ ███▄    █ 
+            ▒▒ █ █ ▒░▓█   ▀  ██ ▀█   █ ▒██▒  ██▒▒██    ▒    ▓█░ █ ░█░▓██▒ ██ ▀█   █ 
+            ░░  █   ░▒███   ▓██  ▀█ ██▒▒██░  ██▒░ ▓██▄      ▒█░ █ ░█ ▒██▒▓██  ▀█ ██▒
+             ░ █ █ ▒ ▒▓█  ▄ ▓██▒  ▐▌██▒▒██   ██░  ▒   ██▒   ░█░ █ ░█ ░██░▓██▒  ▐▌██▒
+            ▒██▒ ▒██▒░▒████▒▒██░   ▓██░░ ████▓▒░▒██████▒▒   ░░██▒██▓ ░██░▒██░   ▓██░
+            ▒▒ ░ ░▓ ░░░ ▒░ ░░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░   ░ ▓░▒ ▒  ░▓  ░ ▒░   ▒ ▒ 
+            ░░   ░▒ ░ ░ ░  ░░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░     ▒ ░ ░   ▒ ░░ ░░   ░ ▒░
+             ░    ░     ░      ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░       ░   ░   ▒ ░   ░   ░ ░ 
+             ░    ░     ░  ░         ░     ░ ░        ░         ░     ░           ░ 
+            """
+        print(xeno_win_ascii)
         break
-    elif user_input == "7":
-        print("Throwing in the towel huh? I knew you couldn't handle it!\n")
-        break
-    elif user_input == "8":
-        store.do_shopping(dante)  # Option to visit the store
-    else:
-        print(f"Uh Oh! Looks like you entered {user_input} instead of a selectable option. Try again!\n")
-     
-    # Check if the dante has died
-    if not dante.alive():
-        print("Oh no, The dante has died! Better luck next time! GAME OVER\n")
-        break
+    if user_input == "9":
+        print()
+        armour_hall.do_shopping(blood_angels)  # Option to visit the armour_hall
+    elif user_input not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+        print(f"Hmph, it seems you entered {user_input} instead of a selectable option. Consulting the Codex Astartes to figure out what you require...\n")
