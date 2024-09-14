@@ -236,36 +236,36 @@ title_screen()
 
 def display_ascii_art_in_terminal():
     ascii_art = """
-                                                   Q                           Q   
-                                                   QQ                         QQ   
-                                                   QQ                         QQ   
-                                                   QQQ                       QQQ   
-                                                   QQQ                       QQQ   
-                                                   QQQQ                     QQQQ   
-                                                 Q  QQQQ                   QQQQ  Q 
-                                                 QQ QQQQQ                 QQQQQ QQ 
-                                                 QQQQQQQQQQ             QQQQQQQQQQ 
-                                                 QQQQQQQQQQQQ         QQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQQQ  Q  QQQQQQQQQQQQQ  
-                                                Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
-                                                QQQQQQQQQQQQQQ  QQ QQQQQQQQQQQQQQQ
-                                                 QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
-                                                   QQQQQQQQQ    QQQ    QQQQQQQQQ   
-                                                 QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
-                                                 QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
-                                                  QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
-                                                    QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
-                                                    QQQQQQQQQQQQQQQQQQQQQQQQQQQ    
-                                                   QQQQQQQ    QQQQQQQ    QQQQQQQ   
-                                                    QQQQQ     QQQQQQQ     QQQQQ    
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQQ             
-                                                              QQQQQQQ              
-                                                               QQQQQ               
-    """
+                                                      Q                           Q   
+                                                      QQ                         QQ   
+                                                      QQ                         QQ   
+                                                      QQQ                       QQQ   
+                                                      QQQ                       QQQ   
+                                                      QQQQ                     QQQQ   
+                                                    Q  QQQQ                   QQQQ  Q 
+                                                    QQ QQQQQ                 QQQQQ QQ 
+                                                    QQQQQQQQQQ             QQQQQQQQQQ 
+                                                    QQQQQQQQQQQQ         QQQQQQQQQQQQ 
+                                                     QQQQQQQQQQQQQ  Q  QQQQQQQQQQQQQ  
+                                                   Q  QQQQQQQQQQQQ  Q  QQQQQQQQQQQQ  Q
+                                                   QQQQQQQQQQQQQQ  QQ QQQQQQQQQQQQQQQ
+                                                    QQQQQQQQQQQQQ  QQQ  QQQQQQQQQQQQQ 
+                                                     QQQQQQQQQQQ   QQQ   QQQQQQQQQQQ  
+                                                      QQQQQQQQQ    QQQ    QQQQQQQQQ   
+                                                    QQQQQQQQQQQQ  QQQQQ  QQQQQQQQQQQQ 
+                                                    QQQQQQQQQQQQQ QQQQQ QQQQQQQQQQQQQ 
+                                                     QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ  
+                                                       QQQQQQQQQQ QQQQQQQQQQQQQQQQ    
+                                                       QQQQQQQQQQQQQQQQQQQQQQQQQQQ    
+                                                      QQQQQQQ    QQQQQQQ    QQQQQQQ   
+                                                       QQQQQ     QQQQQQQ     QQQQQ    
+                                                                 QQQQQQQQ             
+                                                                 QQQQQQQQ             
+                                                                 QQQQQQQQ             
+                                                                 QQQQQQQQ             
+                                                                 QQQQQQQ              
+                                                                  QQQQQ               
+    \n\n"""
     print(ascii_art)
 
 # Call the function to display the ASCII art in the terminal
