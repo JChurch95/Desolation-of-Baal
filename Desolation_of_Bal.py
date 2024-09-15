@@ -13,7 +13,7 @@ class Tyranids:
     def attack(self, enemy):
         if enemy.alive():
             damage = self.combined_strength
-            print(f"- The {self.__class__.__name__} charges the Blood Angels and kills {damage} of their Space Marines!")
+            print(f"!!!The Hive Fleet {self.__class__.__name__} counter attacks the Blood Angels and kills {damage} of their Space Marines!!!\n\n")
             print()
             
             if hasattr(enemy, 'take_damage'):
@@ -125,7 +125,7 @@ class Space_Marines:
     def attack(self, enemy):
         if enemy.alive():
             damage = self.combined_strength
-            print(f"- The Blood Angels attack the {enemy.__class__.__name__} with righteous fury ande deal {damage} damage!\n")
+            print(f"> The Blood Angels attack the {enemy.__class__.__name__} with righteous fury and deal {damage} damage!\n\n")
             
             if hasattr(enemy, 'take_damage'):
                 damage_taken = enemy.take_damage(damage)
@@ -138,8 +138,6 @@ class Space_Marines:
             
             if not enemy.alive():
                 print(f"The {enemy.__class__.__name__} has been defeated!\n")
-        else:
-            print(f"The {enemy.__class__.__name__} has already been defeated\n")
 
     def take_damage(self, damage):
         self.ranks -= damage
@@ -157,9 +155,9 @@ class Blood_Angels(Space_Marines):
 
     def print_status(self):
         if self.alive():
-            print(f"* The Blood Angels have {self.ranks} Space Marines left in their Chapter. Their combined strength is {self.combined_strength}. Hold fast!\n")
+            print(f"> The Blood Angels have {self.ranks} Space Marines left in their Chapter. Their combined strength is {self.combined_strength}. Hold fast!\n")
         else:
-            print("Even though they stood valiantly against the Xeno horde, The Blood Angels could not hold back the Tyranid Fleet. Baal is lost!\n")
+            print("> Even though they stood valiantly against the Xeno horde, The Blood Angels could not hold back the Tyranid Fleet. Baal is lost!\n")
 
     def check_victory(self, enemies):
         if all(not enemy.alive() for enemy in enemies):
@@ -179,9 +177,18 @@ class Blood_Angels(Space_Marines):
             print("\n" + "=" * 60)
             print("VICTORY FOR THE IMPERIUM!")
             print("=" * 60)
-            print("The Blood Angels have triumphed over the Tyranid Swarm!")
-            print("Baal is saved, and the legacy of Sanguinius lives on!")
-            print("The Emperor protects!")
+            print()
+            print("The Blood Angels have triumphed over the Tyranid Swarm! The Xeno filth has been decimated!")
+            print()
+            print("Baal is saved, Commander Dante has finally been allowed to rest, and the legacy of Sanguinius lives on!")
+            print()
+            print("BURN THE HERETIC!")
+            print()
+            print("KILL THE MUTANT!")
+            print()
+            print("PURGE THE UNCLEAN!")
+            print()
+            print("FOR THE EMPEROR!")
             print("=" * 60)
             return True
         return False
@@ -190,8 +197,8 @@ class Blood_Angels(Space_Marines):
         if random.random() < 0.2:
             double_damage = self.combined_strength * 2
             enemy.hive_fleet -= double_damage
-            print(f"- The {self.__class__.__name__} give into the Black Rage...\n")
-            print(f"- They slaughter {double_damage} of the {enemy.__class__.__name__}!\n\n")
+            print(f"> The {self.__class__.__name__} give into the Black Rage...\n")
+            print(f"> They slaughter {double_damage} of the {enemy.__class__.__name__}!\n\n\n")
         else:
             super().attack(enemy)
 
@@ -199,11 +206,9 @@ class Blood_Angels(Space_Marines):
         if not enemy.alive():
             print(f"You defeated the {enemy.__class__.__name__} and earned {enemy.xeno_skulls} Xeno Skulls! Visit the Armouring Hall to recruit more units.\n")
             self.xeno_skulls += enemy.xeno_skulls  # Add xeno_skulls to Blood_Angels's xeno_skulls
-            print(f"You now have {self.xeno_skulls} Xeno Skulls.\n")
+            print(f"You now have {self.xeno_skulls} Xeno Skulls.\n\n")
             
-            # Print Blood_Angels's status only if the enemy is defeated
-            self.print_status()
-        # If the enemy is still alive, don't print the status
+        
 
     # Buy method to allow Blood_Angels objects to purchase items from the virtual armour_hall
     def recruit(self, item):
@@ -229,58 +234,60 @@ class Blood_Angels(Space_Marines):
         
 # Units class and its subclasses, including the recruit_amount attribute to ensure we can't recruit more than the max ranks
 class Units:
-    def __init__(self, name, cost, recruit_amount):
+    def __init__(self, name, cost, recruit_amount, combined_strength):
         self.name = name
         self.cost = cost
         self.recruit_amount = recruit_amount
+        self.combined_strength = combined_strength
 
     def apply(self, Blood_Angels):
         pass
 
 class Assault(Units):
     def __init__(self):
-        super().__init__("Assault", 10, 100)
+        super().__init__("Assault", 5, 100, 10)
 
     def apply(self, Blood_Angels):
         Blood_Angels.ranks += self.recruit_amount
         Blood_Angels.combined_strength += 10
-        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Assault Space Marines into their ranks and add 10 to their combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+        print(f"> The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Assault Space Marines into their ranks and add 10 to their combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
 
 class Incursor(Units):
     def __init__(self):
-        super().__init__("Incursor", 20, 75)
+        super().__init__("Incursor", 10, 75, 25)
 
     def apply(self, Blood_Angels):
         Blood_Angels.ranks += self.recruit_amount
-        Blood_Angels.combined_strength += 20
-        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Incursor Space Marines into their ranks and gains 20 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+        Blood_Angels.combined_strength += 25
+        print(f"> The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Incursor Space Marines into their ranks and gains 20 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
 
 class Chaplain(Units):
     def __init__(self):
-        super().__init__("Chaplain", 30, 50)
+        super().__init__("Chaplain", 25, 50, 50)
 
     def apply(self, Blood_Angels):
         Blood_Angels.ranks += self.recruit_amount
-        Blood_Angels.combined_strength += 30
-        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Chaplains Space Marines into their ranks and gains 30 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+        Blood_Angels.combined_strength += 50
+        print(f"> The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Chaplains Space Marines into their ranks and gains 30 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
 
 class Dreadnaught(Units):
     def __init__(self):
-        super().__init__("Dreadnaught", 40, 25)
+        super().__init__("Dreadnaught", 50, 25, 75)
 
     def apply(self, Blood_Angels):
         Blood_Angels.ranks += self.recruit_amount
-        Blood_Angels.combined_strength += 40
-        print(f"- The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Dreadnaughts into their ranks and gains 40 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+        Blood_Angels.combined_strength += 75
+        print(f"> The {Blood_Angels.__class__.__name__} recruit {self.recruit_amount} Dreadnaughts into their ranks and gains 40 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
 
 class Commander(Units):
     def __init__(self):
-        super().__init__("Commander", 100, 1)
+        super().__init__("Commander", 500, 1, 100)
 
     def apply(self, Blood_Angels):
         Blood_Angels.ranks += self.recruit_amount
         Blood_Angels.combined_strength += 100
-        print(f"- The {Blood_Angels.__class__.__name__} recruit a Commander into their ranks and gains 100 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+        print(f"> The {Blood_Angels.__class__.__name__} recruit a Commander into their ranks and gains 100 combined strength! Combined strength is now {Blood_Angels.combined_strength}\n")
+
 # armour_hall class
 class Armour_Hall:
     items = [Assault(), Incursor(), Chaplain(), Dreadnaught(), Commander()]  # armour_hall items: All unit subclasses
@@ -293,18 +300,21 @@ class Armour_Hall:
             print()
             print(f"You have {Blood_Angels.xeno_skulls} Xeno Skulls.")
             print()
+            print(f"The Blood angels have {Blood_Angels.ranks}/{Blood_Angels.max_ranks} defensive positions to fill.")
+            print()
             print("Which unit do we need brother?")
             print()
 
             for i, item in enumerate(armour_hall.items):
-                print(f"{i + 1}. {item.name} ({item.cost} Xeno Skulls)")
-            print("6. Go back to crush more Xeno Skulls")
+                print(f"{i + 1}. {item.name} Space Marines that will fill ({item.recruit_amount}) empty defensive positions and will add ({item.combined_strength}) to your Chapters strength ({item.cost} Xeno Skulls)\n")
+            print("6. Go back to crush more Xeno Skulls!")
             print()
 
             user_input = int(input("> Let's do option: "))
 
             if user_input == 6:
-                print("Hold the line brothers! Sanguinius is watching over us!")
+                print()
+                print("Hold the line brothers! Sanguinius is watching over us!\n\n")
                 break
             elif 1 <= user_input <= len(armour_hall.items):
                 item_to_buy = armour_hall.items[user_input - 1]
@@ -419,31 +429,47 @@ hive_tyrant = Hive_Tyrant(1, 800, 100)
 # This will check if the characters are alive, and if they are, it  will print their status
 while blood_angels.alive():
     print()
+    if blood_angels.ranks <= 0:
+        print("!!!You were overrun by the seemingly endless swarm of Xeno filth. All of Baal is lost!!!\n")
+        xeno_win_ascii = """
+        ▒██   ██▒▓█████  ███▄    █  ▒█████    ██████     █     █░ ██▓ ███▄    █ 
+        ▒▒ █ █ ▒░▓█   ▀  ██ ▀█   █ ▒██▒  ██▒▒██    ▒    ▓█░ █ ░█░▓██▒ ██ ▀█   █ 
+        ░░  █   ░▒███   ▓██  ▀█ ██▒▒██░  ██▒░ ▓██▄      ▒█░ █ ░█ ▒██▒▓██  ▀█ ██▒
+         ░ █ █ ▒ ▒▓█  ▄ ▓██▒  ▐▌██▒▒██   ██░  ▒   ██▒   ░█░ █ ░█ ░██░▓██▒  ▐▌██▒
+        ▒██▒ ▒██▒░▒████▒▒██░   ▓██░░ ████▓▒░▒██████▒▒   ░░██▒██▓ ░██░▒██░   ▓██░
+        ▒▒ ░ ░▓ ░░░ ▒░ ░░ ▒░   ▒ ▒ ░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░   ░ ▓░▒ ▒  ░▓  ░ ▒░   ▒ ▒ 
+        ░░   ░▒ ░ ░ ░  ░░ ░░   ░ ▒░  ░ ▒ ▒░ ░ ░▒  ░ ░     ▒ ░ ░   ▒ ░░ ░░   ░ ▒░
+         ░    ░     ░      ░   ░ ░ ░ ░ ░ ▒  ░  ░  ░       ░   ░   ▒ ░   ░   ░ ░ 
+         ░    ░     ░  ░         ░     ░ ░        ░         ░     ░           ░ 
+        """
+        print(xeno_win_ascii)
+        break
+
     blood_angels.print_status()
     if gaunts.alive():
         gaunts.print_status()
     else:
-        print("The seemingly endless swarm of gaunts have been crushed beneath the feet of the mighty Blood Angels. Rejoice in the eradication of the Zeno filth!\n")
+        print("X The seemingly endless swarm of gaunts have been crushed beneath the feet of the mighty Blood Angels. Rejoice in the eradication of the Zeno filth!\n")
     if warriors.alive():
         warriors.print_status()
     else:
-        print("The Tyranid Warriors lay butchered across the battfield. Xeno exoskeletons are no match for chainswords!\n")
+        print("X The Tyranid Warriors lay butchered across the battfield. Xeno exoskeletons are no match for chainswords!\n")
     if ravener.alive():
         ravener.print_status()
     else:
-        print("Since the Raveners were attacking from underground, you lit the crude prometheum beneath the surface. It will burn for years before ever letting up!\n")
+        print("X Since the Raveners were attacking from underground, you lit the crude prometheum beneath the surface. It will burn for years before ever letting up!\n")
     if lictor.alive():
         lictor.print_status()
     else:
-        print("You listened to your bioengineered heightened senses, and saw through the Lictors' active camoflouge. Threats neutralized.\n")
+        print("X You listened to your bioengineered heightened senses, and saw through the Lictors' active camoflouge. Threats neutralized.\n")
     if carnifex.alive():
         carnifex.print_status()
     else:
-        print("Through proper planning and sheer will, you have wiped out every Carnifex in the Tyranid swarm!\n")
+        print("X Through proper planning and sheer will, you have wiped out every Carnifex in the Tyranid swarm!\n")
     if hive_tyrant.alive():
         hive_tyrant.print_status()
     else:
-        print("Only by the blood of Sanguinius that flows through you were you able to defeat the Hive Tyrant!\n")
+        print("X Only by the blood of Sanguinius that flows through you were you able to defeat the Hive Tyrant!\n")
     print()
     print()
 
@@ -453,13 +479,21 @@ while blood_angels.alive():
     print("=====================")
     print()
     print("1. Charge into the swarm of Gaunts")
+    print()
     print("2. Take on the Tyranid Warriors")
+    print()
     print("3. Feel for vibrations from the Raveners")
+    print()
     print("4. Listen to your senses to find the Lictors")
-    print("5. Test your skills against mighty Carnifices")
+    print()
+    print("5. Test your skills against the mighty Carnifices")
+    print()
     print("6. Go toe to toe with the Hive Tyrant")
+    print()
     print("7. Take a moment to plan your next move")
+    print()
     print("8. Abandon Baal")
+    print()
     print("9. Visit the Armour Hall\n\n")  # Added option to visit the armour_hall
     print("> Let's do option: ", end="")
 
@@ -476,7 +510,7 @@ while blood_angels.alive():
             if gaunts.alive():
                 gaunts.attack(blood_angels)
         else:
-            print("X The Xeno filth has no more Gaunts! Worry not brother, there are plenty other skulls to crush!\n")
+            print("* The Xeno filth has no more Gaunts! Worry not brother, there are plenty other skulls to crush! *\n")
     if user_input == "2":
         print()
         if warriors.alive():
@@ -484,7 +518,7 @@ while blood_angels.alive():
             if warriors.alive():
                 warriors.attack(blood_angels)
         else:
-            print("X The Xeno filth has no more Warrirors! Worry not brother, there are plenty other skulls to crush!\n")
+            print("* The Xeno filth has no more Warrirors! Worry not brother, there are plenty other skulls to crush! *\n")
     if user_input == "3":
         print()
         if ravener.alive():
@@ -492,7 +526,7 @@ while blood_angels.alive():
             if ravener.alive():
                 ravener.attack(blood_angels)
         else:
-            print("X The Xeno filth has no more Raveners! Worry not brother, there are plenty other skulls to crush!\n")
+            print("* The Xeno filth has no more Raveners! Worry not brother, there are plenty other skulls to crush! *\n")
     if user_input == "4":
         print()    
         if lictor.alive():
@@ -500,7 +534,7 @@ while blood_angels.alive():
             if lictor.alive():
                 lictor.attack(blood_angels)
         else:
-            print("X The Xeno filth has no more Lictors! Worry not brother, there are plenty other skulls to crush!\n")
+            print("* The Xeno filth has no more Lictors! Worry not brother, there are plenty other skulls to crush! *\n")
     if user_input == "5":
         print()
         if carnifex.alive():
@@ -508,7 +542,7 @@ while blood_angels.alive():
             if carnifex.alive():
                 carnifex.attack(blood_angels)
             if not carnifex.alive():
-             print("X The Xeno filth has no more Carnifexes! Worry not brother, there are plenty other skulls to crush!\n")
+             print("* The Xeno filth has no more Carnifexes! Worry not brother, there are plenty other skulls to crush! *\n")
     if user_input == "6":
         print()
         if hive_tyrant.alive():
@@ -566,4 +600,4 @@ while blood_angels.alive():
         print()
         armour_hall.do_shopping(blood_angels)  # Option to visit the armour_hall
     elif user_input not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-        print(f"Hmph, it seems you entered {user_input} instead of a selectable option. Consulting the Codex Astartes to figure out what you require...\n")
+        print(f"Hmph, it seems you entered {user_input} instead of a selectable option. Consulting the Codex Astartes to figure out what you require...\n\n")
