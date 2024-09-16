@@ -81,7 +81,7 @@ class Tyranids:
 
     def calculate_regeneration(self):
         if self.__class__ != Hive_Tyrant:
-            self.regeneration_amount = self.hive_fleet // 5
+            self.regeneration_amount = self.hive_fleet // 3
 
     def apply_regeneration(self):
         if self.regeneration_amount > 0:
@@ -147,6 +147,7 @@ class Lictors(Tyranids):
             actual_damage = super().take_damage(amount)
             print(f"- You slaughtered {actual_damage} Lictors!\n")
             return actual_damage
+        
     def apply_regeneration(self):
         super().apply_regeneration()  # Call the parent class method to apply regeneration
 
